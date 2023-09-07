@@ -17,12 +17,15 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @Controller
 public class SocketController {
 
-    private final SocketIOServer server;
-    private final SocketService socketService;
+    @Autowired
+    private SocketIOServer server;
+
+    @Autowired
+    private SocketService socketService;
 
     public SocketController(SocketIOServer server, SocketService socketService) {
-        this.server = server;
-        this.socketService = socketService;
+        // this.server = server;
+        // this.socketService = socketService;
 
         server.addConnectListener(onConnect());
         server.addDisconnectListener(onDisconnect());
@@ -37,6 +40,7 @@ public class SocketController {
 
     // @OnConnect
     private ConnectListener onConnect() {
+        System.out.println("onConnect");
         return (client) -> {
             var params = client.getHandshakeData().getUrlParams();
             System.out.println("Cliente conectado: " + client.getSessionId());
@@ -46,6 +50,7 @@ public class SocketController {
     }
 
     private DisconnectListener onDisconnect() {
+        System.out.println("onDisconnect");
         return (client) -> {
             System.out.println("Cliente desconectado: " + client.getSessionId());
             // String room = params.get("room").stream().collect(Collectors.joining());

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.corundumstudio.socketio.SocketIOServer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @CrossOrigin(origins = "*")
@@ -25,6 +26,14 @@ public class TareasController {
 
   @Autowired
   private TareasService tareasService;
+
+  @Autowired
+  private SocketIOServer server;
+
+  public void emit(String eventName, Object data) {
+    System.out.println("emit: " + eventName + ", " + data);
+    server.getBroadcastOperations().sendEvent(eventName, data);
+  }
 
   @GetMapping
   public List<Tarea> getTareas() {
@@ -45,6 +54,7 @@ public class TareasController {
   @PostMapping
   public ResponseEntity<Tarea> createTarea(@RequestBody Tarea tarea) {
     Tarea created = tareasService.createTarea(tarea);
+    emit("tareaCreated", tarea);
     return new ResponseEntity<>(created, HttpStatus.CREATED);
   }
 
@@ -57,6 +67,7 @@ public class TareasController {
   public ResponseEntity<Tarea> updateTarea(@PathVariable Long id, @RequestBody Map<String, Object> body) {
     Tarea tareaBody = getTareaFromMap(body);
     Tarea updated = tareasService.updateTarea(id, tareaBody);
+    emit("tareaUpdated", updated);
     if (updated != null) {
       return new ResponseEntity<>(updated, HttpStatus.OK);
     } else {
@@ -67,6 +78,7 @@ public class TareasController {
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteTarea(@PathVariable Long id) {
     boolean deleted = tareasService.deleteTarea(id);
+    emit("tareaDeleted", deleted);
     if (deleted) {
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     } else {

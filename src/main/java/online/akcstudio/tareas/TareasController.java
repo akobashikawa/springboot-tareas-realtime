@@ -76,11 +76,11 @@ public class TareasController {
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteTarea(@PathVariable Long id) {
+  public ResponseEntity<Long> deleteTarea(@PathVariable Long id) {
     boolean deleted = tareasService.deleteTarea(id);
-    emit("tareaDeleted", deleted);
+    emit("tareaDeleted", id);
     if (deleted) {
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+      return new ResponseEntity<>(id, HttpStatus.NO_CONTENT);
     } else {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

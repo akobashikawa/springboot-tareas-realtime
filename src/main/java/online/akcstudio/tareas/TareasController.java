@@ -54,7 +54,7 @@ public class TareasController {
   @PostMapping
   public ResponseEntity<Tarea> createTarea(@RequestBody Tarea tarea) {
     Tarea created = tareasService.createTarea(tarea);
-    emit("tareaCreated", tarea);
+    emit("tareaCreated", created);
     return new ResponseEntity<>(created, HttpStatus.CREATED);
   }
 
